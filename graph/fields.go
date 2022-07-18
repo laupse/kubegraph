@@ -21,6 +21,10 @@ func GetFields() Fields {
 		FieldName: "title",
 		Type:      "string",
 	}
+	mainStatField := Field{
+		FieldName: "mainstat",
+		Type:      "string",
+	}
 	arcReadyField := Field{
 		FieldName: "arc__ready",
 		Type:      "number",
@@ -51,6 +55,7 @@ func GetFields() Fields {
 
 	fields.NodeFields = append(fields.NodeFields, idField)
 	fields.NodeFields = append(fields.NodeFields, titleField)
+	fields.NodeFields = append(fields.NodeFields, mainStatField)
 	fields.NodeFields = append(fields.NodeFields, arcReadyField)
 	fields.NodeFields = append(fields.NodeFields, arcNotReadyField)
 	fields.NodeFields = append(fields.NodeFields, arcMissingField)

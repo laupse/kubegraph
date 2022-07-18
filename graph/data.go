@@ -22,6 +22,7 @@ type Edge struct {
 type Node struct {
 	Id          string  `json:"id"`
 	Title       string  `json:"title"`
+	MainStat    string  `json:"mainstat"`
 	ArcReady    float64 `json:"arc__ready"`
 	ArcNotReady float64 `json:"arc__not_ready"`
 	ArcMissing  float64 `json:"arc__missing"`
@@ -32,10 +33,11 @@ type GraphData struct {
 	Nodes []Node `json:"nodes"`
 }
 
-func newSimpleNode(id, name string) Node {
+func newSimpleNode(id, name, mainStat string) Node {
 	return Node{
 		Id:          id,
 		Title:       name,
+		MainStat:    mainStat,
 		ArcReady:    1,
 		ArcNotReady: 0,
 		ArcMissing:  0,
@@ -56,6 +58,7 @@ func podsToNodesAndEdges(graphData *GraphData, pods v1.PodList) {
 		graphData.Nodes = append(graphData.Nodes, Node{
 			Id:          string(pod.UID),
 			Title:       pod.Name,
+			MainStat:    "POD",
 			ArcReady:    ready,
 			ArcNotReady: notready,
 			ArcMissing:  missing,
@@ -103,6 +106,7 @@ func GetDataFromNamespace(ns string, selector string) (*GraphData, error) {
 		graphData.Nodes = append(graphData.Nodes, Node{
 			Id:          string(rs.UID),
 			Title:       rs.Name,
+			MainStat:    "RS",
 			ArcReady:    readyReplica,
 			ArcNotReady: notReadyReplica,
 			ArcMissing:  missingReplica,
@@ -121,8 +125,8 @@ func GetDataFromNamespace(ns string, selector string) (*GraphData, error) {
 		return nil, err
 	}
 
-	for _, rs := range deploys.Items {
-		graphData.Nodes = append(graphData.Nodes, newSimpleNode(string(rs.UID), rs.Name))
+	for _, deploy := range deploys.Items {
+		graphData.Nodes = append(graphData.Nodes, newSimpleNode(string(deploy.UID), deploy.Name, "DEPLOY"))
 	}
 
 	dss, err := clientset.AppsV1().DaemonSets(ns).List(context.TODO(), options)
@@ -131,7 +135,7 @@ func GetDataFromNamespace(ns string, selector string) (*GraphData, error) {
 	}
 
 	for _, ds := range dss.Items {
-		graphData.Nodes = append(graphData.Nodes, newSimpleNode(string(ds.UID), ds.Name))
+		graphData.Nodes = append(graphData.Nodes, newSimpleNode(string(ds.UID), ds.Name, "DS"))
 	}
 
 	stss, err := clientset.AppsV1().StatefulSets(ns).List(context.TODO(), options)
@@ -140,7 +144,7 @@ func GetDataFromNamespace(ns string, selector string) (*GraphData, error) {
 	}
 
 	for _, sts := range stss.Items {
-		graphData.Nodes = append(graphData.Nodes, newSimpleNode(string(sts.UID), sts.Name))
+		graphData.Nodes = append(graphData.Nodes, newSimpleNode(string(sts.UID), sts.Name, "STS"))
 	}
 
 	return graphData, nil
