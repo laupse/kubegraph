@@ -11,7 +11,7 @@ Great for demonstrating Kubernetes capabilities like rollout.
 ## Deployment
 You need a Kubernetes cluster (it could be something like kind or minkube ofc) with Grafana deploy on it. 
 
-Grafana alsso needs this [Grafana Plugin](https://grafana.com/grafana/plugins/hamedkarbasi93-nodegraphapi-datasource/) to be installed
+Grafana also needs this [Grafana Plugin](https://grafana.com/grafana/plugins/hamedkarbasi93-nodegraphapi-datasource/) to be installed
 
 Then you can deploy this using :
 
@@ -19,7 +19,7 @@ Then you can deploy this using :
 kubectl apply -f manifests/deploy.yml
 ```
 
-Do not forget to add the Node Graph Api using the service dns created the kubectl command above
+Do not forget to add the Node Graph Api using the service dns created by the kubectl command above
 
 ## Querying
 
