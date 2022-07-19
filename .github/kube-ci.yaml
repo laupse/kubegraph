@@ -75,9 +75,10 @@ kind: Service
 metadata:
   name: kubegraph
 spec:
+  type: NodePort
   selector:
     app: kubegraph
   ports:
   - port: 3000
     targetPort: 3000
-    NodePort: 30000
+    nodePort: 30000
