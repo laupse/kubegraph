@@ -10,11 +10,12 @@ export const options = {
 export default function () {
 
     describe('Health', (t) => {
-        const response = http.get('http://localhost:30000/api/health');
+        const response = http.get('http://localhost:30000/api/healt');
 
         t.expect(response.status)
         .as('response status')
         .toEqual(200)
+
     });
 
     describe('Fetch fields', (t) => {
@@ -25,6 +26,7 @@ export default function () {
         .toEqual(200)
         .and(response)
         .toHaveValidJson()
+
     });
 
     describe('Fetch data', (t) => {
@@ -35,5 +37,6 @@ export default function () {
         .toEqual(200)
         .and(response)
         .toHaveValidJson()
+
     });
 }
