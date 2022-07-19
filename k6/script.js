@@ -10,7 +10,7 @@ export const options = {
 export default function () {
 
     describe('Health', (t) => {
-        const response = http.get('http://localhost:30000/api/healt');
+        const response = http.get('http://localhost:30000/api/health');
 
         t.expect(response.status)
         .as('response status')
