@@ -10,6 +10,7 @@ on:
 
 env:
   IMAGE_NAME: kubegraph
+  K6_VERSION: "v0.39.0"
 
 jobs:
   integration-test: 
@@ -34,7 +35,16 @@ jobs:
     - name: Load and apply manifest
       run: |
         kind load docker-image ${{ env.IMAGE_NAME }}:test --name kind
-        kubectl apply -f .github/kind-config.yaml
+        kubectl apply -f .github/kube-ci.yaml
+        sleep 5
+
+    - name: Run integration test 
+      run: |
+        wget -q https://github.com/grafana/k6/releases/download/${{ env.K6_VERSION }}/k6-${{ env.K6_VERSION }}-linux-amd64.tar.gz
+        tar -xzf k6-${{ env.K6_VERSION }}-linux-amd64.tar.gz
+        chmod +x k6-${{ env.K6_VERSION }}-linux-amd64/k6
+        k6-${{ env.K6_VERSION }}-linux-amd64/k6 run script.js
+      working-directory: k6
 
   build-image:
     runs-on: ubuntu-latest
