@@ -26,11 +26,11 @@ jobs:
         context: .
         file: Dockerfile
         push: false
-        tags: $IMAGE_NAME:test
+        tags: ${{ env.IMAGE_NAME }}:test
 
     - name: Load and apply manifest
       run: |
-        kind load docker-image $IMAGE_NAME:test
+        kind load docker-image ${{ env.IMAGE_NAME }}:test
         kubectl apply -f manifests/deploy.yaml
 
   build-image:
@@ -54,4 +54,4 @@ jobs:
         context: .
         file: Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/spm-$IMAGE_NAME:$IMAGE_NAME
+        tags: ghcr.io/${{ github.repository_owner }}/spm-${{ env.IMAGE_NAME }}:${{ env.IMAGE_NAME }}
