@@ -13,52 +13,20 @@ type Fields struct {
 
 func GetFields() Fields {
 	var fields Fields
-	idField := Field{
-		FieldName: "id",
-		Type:      "string",
+	fields.EdgeFields = []Field{
+		{FieldName: "id", Type: "string"},
+		{FieldName: "source", Type: "string"},
+		{FieldName: "target", Type: "string"},
 	}
-	titleField := Field{
-		FieldName: "title",
-		Type:      "string",
+	fields.NodeFields = []Field{
+		{FieldName: "id", Type: "string"},
+		{FieldName: "title", Type: "string"},
+		{FieldName: "mainstat", Type: "string"},
+		{FieldName: "arc__ready", Type: "string", Color: "green"},
+		{FieldName: "arc__not_ready", Type: "string", Color: "orange"},
+		{FieldName: "arc__missing", Type: "string", Color: "red"},
+		{FieldName: "mainstat", Type: "string"},
 	}
-	mainStatField := Field{
-		FieldName: "mainstat",
-		Type:      "string",
-	}
-	arcReadyField := Field{
-		FieldName: "arc__ready",
-		Type:      "number",
-		Color:     "green",
-	}
-	arcNotReadyField := Field{
-		FieldName: "arc__not_ready",
-		Type:      "number",
-		Color:     "orange",
-	}
-	arcMissingField := Field{
-		FieldName: "arc__missing",
-		Type:      "number",
-		Color:     "red",
-	}
-	sourceField := Field{
-		FieldName: "source",
-		Type:      "string",
-	}
-	targetField := Field{
-		FieldName: "target",
-		Type:      "string",
-	}
-
-	fields.EdgeFields = append(fields.EdgeFields, idField)
-	fields.EdgeFields = append(fields.EdgeFields, sourceField)
-	fields.EdgeFields = append(fields.EdgeFields, targetField)
-
-	fields.NodeFields = append(fields.NodeFields, idField)
-	fields.NodeFields = append(fields.NodeFields, titleField)
-	fields.NodeFields = append(fields.NodeFields, mainStatField)
-	fields.NodeFields = append(fields.NodeFields, arcReadyField)
-	fields.NodeFields = append(fields.NodeFields, arcNotReadyField)
-	fields.NodeFields = append(fields.NodeFields, arcMissingField)
 
 	return fields
 }
