@@ -28,7 +28,7 @@ export default function () {
     });
 
     describe('Fetch data', (t) => {
-        const response = http.get('http://localhost:30000/api/health');
+        const response = http.get('http://localhost:30000/api/graph/data');
 
         t.expect(response.status)
         .as('response status')
