@@ -30,7 +30,7 @@ func main() {
 	app.Get("/api/graph/data", func(c *fiber.Ctx) error {
 		namespace := c.Query("ns", "default")
 		selector := c.Query("selector", "")
-		graphData, err := graph.GetDataFromNamespace(namespace, selector)
+		graphData, err := graph.GetData(namespace, selector)
 		if err != nil {
 			return err
 		}
