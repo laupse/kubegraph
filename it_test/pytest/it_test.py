@@ -22,6 +22,7 @@ class TestClassInstance:
 
     def test_nodes_has_all_fields(self):
         nodes_fields_name = sorted([x["field_name"] for x in self.fields["nodes_fields"]])
+        print(self.fields["nodes_fields"])
         print(nodes_fields_name)
         for node in self.data["nodes"]:
             keys = sorted(list(node.keys()))
