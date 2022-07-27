@@ -21,7 +21,6 @@ class TestClassInstance:
             assert edge["source"] in nodes_id
 
     def test_nodes_has_all_fields(self):
-
         nodes_fields_name = sorted([x["field_name"] for x in self.fields["nodes_fields"]])
         for node in self.data["nodes"]:
             keys = sorted(list(node.keys()))
@@ -29,11 +28,10 @@ class TestClassInstance:
                 assert field == nodes_fields_name[i]
     
     def test_edges_has_all_fields(self):
-
-        nodes_fields_name = sorted([x["field_name"] for x in self.fields["edges_fields"]])
-        for node in self.data["edges"]:
-            keys = sorted(list(node.keys()))
+        edges_fields_name = sorted([x["field_name"] for x in self.fields["edges_fields"]])
+        for edge in self.data["edges"]:
+            keys = sorted(list(edge.keys()))
             for i,field in enumerate(keys):
-                assert field == nodes_fields_name[i]
+                assert field == edges_fields_name[i]
 
 
