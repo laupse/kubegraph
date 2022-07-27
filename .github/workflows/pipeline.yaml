@@ -10,7 +10,6 @@ on:
 
 env:
   IMAGE_NAME: kubegraph
-  K6_VERSION: "v0.39.0"
 
 jobs:
   integration-test: 
@@ -22,7 +21,7 @@ jobs:
       uses: helm/kind-action@v1.3.0
       with: 
         cluster_name: kind
-        config: .github/kind-conf.yaml
+        config: it_test/kind-conf.yaml
 
     - name: Build Docker image
       uses: docker/build-push-action@v2
@@ -30,21 +29,19 @@ jobs:
         context: .
         file: Dockerfile
         push: false
-        tags: ${{ env.IMAGE_NAME }}:test
+        tags: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:ci
 
     - name: Load and apply manifest
       run: |
-        kind load docker-image ${{ env.IMAGE_NAME }}:test --name kind
-        kubectl apply -f .github/kube-ci.yaml
+        kind load docker-image  ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:ci --name kind
+        kubectl apply -f it_test/kube-ci.yaml
         sleep 5
 
     - name: Run integration test 
       run: |
-        wget -q https://github.com/grafana/k6/releases/download/${{ env.K6_VERSION }}/k6-${{ env.K6_VERSION }}-linux-amd64.tar.gz
-        tar -xzf k6-${{ env.K6_VERSION }}-linux-amd64.tar.gz
-        chmod +x k6-${{ env.K6_VERSION }}-linux-amd64/k6
-        k6-${{ env.K6_VERSION }}-linux-amd64/k6 run script.js
-      working-directory: k6
+        pip install -r requirements.txt
+        pytest
+      working-directory: it_test/pytest
 
   build-image:
     runs-on: ubuntu-latest
