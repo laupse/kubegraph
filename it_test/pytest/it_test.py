@@ -2,10 +2,10 @@ from requests import get
 
 
 def get_data():   
-    return get(url="http://localhost:3000/api/graph/data").json()
+    return get(url="http://localhost:30000/api/graph/data").json()
 
 def get_fields():   
-    return get(url="http://localhost:3000/api/graph/fields").json()
+    return get(url="http://localhost:30000/api/graph/fields").json()
 
 class TestClassInstance:
     data = get_data()
