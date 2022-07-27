@@ -10,7 +10,6 @@ on:
 
 env:
   IMAGE_NAME: kubegraph
-  K6_VERSION: "v0.39.0"
 
 jobs:
   integration-test: 
@@ -30,11 +29,11 @@ jobs:
         context: .
         file: Dockerfile
         push: false
-        tags: ${{ env.IMAGE_NAME }}:ci
+        tags: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:ci
 
     - name: Load and apply manifest
       run: |
-        kind load docker-image ${{ env.IMAGE_NAME }}:ci --name kind
+        kind load docker-image  ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:ci --name kind
         kubectl apply -f it_test/kube-ci.yaml
         sleep 5
 
@@ -67,5 +66,5 @@ jobs:
         push: true
         tags: |
           ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest,
-          ghcr.io/${{ github.repository_owner }}/spm-${{ env.IMAGE_NAME }}:main
+          ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:main
 

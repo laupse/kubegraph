@@ -59,8 +59,7 @@ spec:
       serviceAccount: kubegraph
       containers:
       - name: kubegraph
-        image: kubegraph:ci
-        imagePullPolicy: Always
+        image: ghcr.io/laupse/kubegraph:ci
         resources:
           limits:
             memory: "128Mi"
