@@ -5,6 +5,7 @@ ENV GO111MODULE=on
 WORKDIR /go/src/github.com/laupse/kubegraph
 COPY . .
 
+WORKDIR /go/src/github.com/laupse/kubegraph/cmd
 RUN go build -o /go/bin/kubegraph
 
 FROM alpine:3.16
