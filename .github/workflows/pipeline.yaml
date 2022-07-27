@@ -34,7 +34,7 @@ jobs:
 
     - name: Load and apply manifest
       run: |
-        kind load docker-image ${{ env.IMAGE_NAME }}:test --name kind
+        kind load docker-image ${{ env.IMAGE_NAME }}:ci --name kind
         kubectl apply -f it_test/kube-ci.yaml
         sleep 5
 

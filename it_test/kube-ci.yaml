@@ -59,7 +59,7 @@ spec:
       serviceAccount: kubegraph
       containers:
       - name: kubegraph
-        image: ghcr.io/laupse/kubegraph
+        image: kubegraph:ci
         imagePullPolicy: Always
         resources:
           limits:
