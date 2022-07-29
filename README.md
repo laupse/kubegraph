@@ -3,7 +3,7 @@
 This repository contains an "exporter" that will expose Kubernetes ressources (pod, replicaset, deployment, statefulset, daemonset) as [Grafana Node Graph](https://grafana.com/docs/grafana/latest/visualizations/node-graph/) data source using this [Grafana Plugin](https://grafana.com/grafana/plugins/hamedkarbasi93-nodegraphapi-datasource/)
 
 
-https://user-images.githubusercontent.com/98523125/181767115-9821dc7f-b0f8-4031-982d-d47d952096ee.mp4
+https://user-images.githubusercontent.com/98523125/181767308-9af8dd16-80a6-4b15-b39c-704195312a61.mp4
 
 
 This utilitary can help visualizing how this ressources interact and link with  other in a dynamic way. 
