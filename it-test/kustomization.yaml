@@ -1,0 +1,6 @@
+resources:
+  - deploy.yaml
+images:
+  - name: "kubegraph"
+    newName: "localhost:5001/kubegraph"
+    newTag: "ci"

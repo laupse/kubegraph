@@ -1,11 +1,11 @@
 from requests import get
-
+from os import environ
 
 def get_data():   
-    return get(url="http://localhost:30000/api/graph/data").json()
+    return get(url=environ.get("URL") + "/api/graph/data").json()
 
 def get_fields():   
-    return get(url="http://localhost:30000/api/graph/fields").json()
+    return get(url=environ.get("URL") + "/api/graph/fields").json()
 
 class TestClassInstance:
     data = get_data()
