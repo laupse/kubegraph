@@ -1,0 +1,62 @@
+name: Continuous integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  DAGGER_OUTPUT_FORMAT: plain
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.3.0
+        with:
+          install_only: true
+
+      - name: Create kind cluster with registry
+        run: ./kind-with-registry.sh
+
+      - name: Deploy to kind and test
+        uses: dagger/dagger-for-github@v3
+        with:
+          version: 0.2
+          cmds: |
+            project update
+            do deploy
+            do test
+
+  build-image:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    needs: [integration-test]
+
+    env:
+      REGISTRY_PASSWORD: "${{ secrets.GITHUB_TOKEN }}"
+      REGISTRY_USERNAME: $
+      REGISTRY_URL: ghcr.io/${{ github.repository_owner }}
+      REGISTRY_NEED_AUTH: "yes"
+      IMAGE_TAG: main
+
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Push to Github Repository
+        uses: dagger/dagger-for-github@v3
+        with:
+          version: 0.2
+          cmds: |
+            project update
+            do push

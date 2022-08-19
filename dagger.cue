@@ -8,12 +8,12 @@ import (
 	"universe.dagger.io/alpha/kubernetes/kapp"
 )
 
-registry_url: string | *"localhost:5001"
-app:          string | *"kubegraph"
-tag:          string | *"ci"
+app: string | *"kubegraph"
 
 #PrepareIntegrationTest: {
 	srcTest: dagger.#FS
+
+	registry_url: string
 
 	build: docker.#Build & {
 		steps: [
@@ -88,6 +88,9 @@ tag:          string | *"ci"
 dagger.#Plan & {
 	actions: {
 
+		registry_url: client.env.REGISTRY_URL
+		tag: client.env.IMAGE_TAG
+
 		build: docker.#Dockerfile & {
 			source: client.filesystem.".".read.contents
 		}
@@ -95,6 +98,10 @@ dagger.#Plan & {
 		push: docker.#Push & {
 			image: build.output
 			dest:  "\(registry_url)/\(app):\(tag)"
+			if client.env.REGISTRY_NEED_AUTH == "yes" {
+				username: client.env.REGISTRY_USERNAME
+				password: client.env.REGISTRY_PASSWORD
+			}
 		}
 
 		deploy: #Deploy & {
@@ -106,6 +113,7 @@ dagger.#Plan & {
 		test: {
 			_prepare: #PrepareIntegrationTest & {
 				srcTest: client.filesystem."./it-test/pytest".read.contents
+				"registry_url": registry_url
 			}
 
 			integrationTest: #DoIntegrationTest & {
@@ -116,6 +124,11 @@ dagger.#Plan & {
 		}
 	}
 	client: {
+		env: REGISTRY_PASSWORD: dagger.#Secret | ""
+		env: REGISTRY_USERNAME: string | ""
+		env: REGISTRY_URL: string | *"localhost:5001"
+		env: IMAGE_TAG: string | *"ci"
+		env: REGISTRY_NEED_AUTH: string | *"no"
 		commands: kc: {
 			name: "cat"
 			args: ["kind-ci.yaml"]
