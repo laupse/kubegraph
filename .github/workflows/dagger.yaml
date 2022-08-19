@@ -1,4 +1,4 @@
-name: Continuous integration
+name: Continuous integration with dagger
 
 on:
   push:
