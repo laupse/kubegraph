@@ -12,7 +12,21 @@ fi
 
 if [ "$(docker inspect -f '{{.State.Running}}' "kubegraph-control-plane" 2>/dev/null || true)" != 'true' ]; then
   # create a cluster with the local registry enabled in containerd
-  kind create cluster --name kubegraph --config=it-test/kind-conf.yaml
+  cat <<EOF |  kind create cluster --name kubegraph --config=-
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    # port forward 80 on the host to 80 on this node
+    extraPortMappings:
+      - containerPort: 30000
+        hostPort: 30000
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]
+      endpoint = ["http://${reg_name}:5000"]
+EOF
+
 fi
 
 kind export kubeconfig --name kubegraph --kubeconfig kind-ci.yaml

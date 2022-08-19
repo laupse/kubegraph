@@ -8,4 +8,5 @@ type GraphRepository interface {
 	GetDeployments(ns string, selector string) ([]entity.Node, []entity.Edge, error)
 	GetDaemonSets(ns string, selector string) ([]entity.Node, []entity.Edge, error)
 	GetStatefulSets(ns string, selector string) ([]entity.Node, []entity.Edge, error)
+	GetJobs(ns string, selector string) ([]entity.Node, []entity.Edge, error)
 }
