@@ -61,6 +61,13 @@ func (GraphService *GraphService) GetData(ns, selector string) (*entity.GraphDat
 	graphData.Nodes = append(graphData.Nodes, nodes...)
 	graphData.Edges = append(graphData.Edges, edges...)
 
+	nodes, edges, err = GraphService.repository.GetJobs(ns, selector)
+	if err != nil {
+		return nil, err
+	}
+	graphData.Nodes = append(graphData.Nodes, nodes...)
+	graphData.Edges = append(graphData.Edges, edges...)
+
 	return graphData, err
 }
 

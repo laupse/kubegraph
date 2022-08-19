@@ -193,3 +193,19 @@ func (k8s *K8sRepository) GetStatefulSets(ns, selector string) (nodes []entity.N
 
 	return nodes, edges, nil
 }
+
+func (k8s *K8sRepository) GetJobs(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
+	var deploysGroupVersionResource = schema.GroupVersionResource{Group: "batch", Version: "v1", Resource: "jobs"}
+	rss, err := getRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, rs := range rss.Items {
+		node, currentEdges := extractFieldsFromRessource(&rs, "JOB", true, entity.Arcs{Blue: 1})
+		nodes = append(nodes, node)
+		edges = append(edges, currentEdges...)
+	}
+
+	return nodes, edges, nil
+}
