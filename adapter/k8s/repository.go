@@ -134,10 +134,27 @@ func (k8s *K8sRepository) GetReplicasets(ns, selector string) (nodes []entity.No
 	}
 
 	for _, rs := range rss.Items {
-		replicas, _, _ := unstructured.NestedFieldNoCopy(rs.Object, "spec", "replicas")
-		availableReplicas, _, _ := unstructured.NestedFieldNoCopy(rs.Object, "status", "availableReplicas")
-		readyReplicas, _, _ := unstructured.NestedFieldNoCopy(rs.Object, "status", "readyReplicas")
-		arcs := computeReplicasetArc(replicas.(int64), availableReplicas.(int64), readyReplicas.(int64))
+		arcs := entity.Arcs{
+			Blue: 1,
+		}
+		replicas, _, err := unstructured.NestedFieldNoCopy(rs.Object, "spec", "replicas")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		availableReplicas, okAR, err := unstructured.NestedFieldNoCopy(rs.Object, "status", "availableReplicas")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		readyReplicas, okRR, err := unstructured.NestedFieldNoCopy(rs.Object, "status", "readyReplicas")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if okAR && okRR {
+			arcs = computeReplicasetArc(replicas.(int64), availableReplicas.(int64), readyReplicas.(int64))
+		}
 		node, currentEdges := extractFieldsFromRessource(&rs, "RS", false, arcs)
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)

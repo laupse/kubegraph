@@ -13,3 +13,4 @@ spec:
             - name: URL
               value: http://kubegraph:3000
       restartPolicy: Never
+  backoffLimit: 0
