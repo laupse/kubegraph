@@ -99,8 +99,10 @@ dagger.#Plan & {
 			image: build.output
 			dest:  "\(registry_url)/\(app):\(tag)"
 			if client.env.REGISTRY_NEED_AUTH == "yes" {
-				username: client.env.REGISTRY_USERNAME
-				password: client.env.REGISTRY_PASSWORD
+				auth: {
+					username: client.env.REGISTRY_USERNAME
+					secret: client.env.REGISTRY_PASSWORD
+				}
 			}
 		}
 
@@ -124,7 +126,7 @@ dagger.#Plan & {
 		}
 	}
 	client: {
-		env: REGISTRY_PASSWORD: dagger.#Secret | ""
+		env: REGISTRY_PASSWORD: dagger.#Secret
 		env: REGISTRY_USERNAME: string | ""
 		env: REGISTRY_URL: string | *"localhost:5001"
 		env: IMAGE_TAG: string | *"ci"

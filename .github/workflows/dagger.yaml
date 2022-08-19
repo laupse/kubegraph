@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Create k8s Kind Cluster
+      - name: Install kind
         uses: helm/kind-action@v1.3.0
         with:
           install_only: true
@@ -42,8 +42,8 @@ jobs:
     needs: [integration-test]
 
     env:
-      REGISTRY_PASSWORD: "${{ secrets.GITHUB_TOKEN }}"
-      REGISTRY_USERNAME: $
+      REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      REGISTRY_USERNAME: ${{ github.repository_owner }}
       REGISTRY_URL: ghcr.io/${{ github.repository_owner }}
       REGISTRY_NEED_AUTH: "yes"
       IMAGE_TAG: main
