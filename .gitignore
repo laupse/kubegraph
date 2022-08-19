@@ -1,5 +1,3 @@
 *.code-workspace
 
-_tmp/
-cue.mod/
 kind-ci.yaml
