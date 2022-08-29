@@ -14,6 +14,9 @@ env:
 jobs:
   integration-test:
     runs-on: ubuntu-latest
+    env:
+      REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@v3
 
