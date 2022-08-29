@@ -11,23 +11,30 @@ metadata:
   name: kubegraph
   namespace: default
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - "apps"
-  resources:
-  - deployments
-  - replicasets
-  - daemonsets
-  - statefulsets
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+      - statefulsets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - "batch"
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -39,9 +46,9 @@ roleRef:
   name: kubegraph
   apiGroup: rbac.authorization.k8s.io
 subjects:
-- kind: ServiceAccount
-  name: kubegraph
-  namespace: default
+  - kind: ServiceAccount
+    name: kubegraph
+    namespace: default
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -58,18 +65,18 @@ spec:
     spec:
       serviceAccount: kubegraph
       containers:
-      - name: kubegraph
-        image: ghcr.io/laupse/kubegraph:ci
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        readinessProbe:
-          httpGet:
-            path: /api/health
-            port: 3000
-        ports:
-        - containerPort: 3000
+        - name: kubegraph
+          image: ghcr.io/laupse/kubegraph:ci
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+          ports:
+            - containerPort: 3000
 ---
 apiVersion: v1
 kind: Service
@@ -80,6 +87,6 @@ spec:
   selector:
     app: kubegraph
   ports:
-  - port: 3000
-    targetPort: 3000
-    nodePort: 30000
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30000

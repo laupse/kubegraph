@@ -134,10 +134,27 @@ func (k8s *K8sRepository) GetReplicasets(ns, selector string) (nodes []entity.No
 	}
 
 	for _, rs := range rss.Items {
-		replicas, _, _ := unstructured.NestedFieldNoCopy(rs.Object, "spec", "replicas")
-		availableReplicas, _, _ := unstructured.NestedFieldNoCopy(rs.Object, "status", "availableReplicas")
-		readyReplicas, _, _ := unstructured.NestedFieldNoCopy(rs.Object, "status", "readyReplicas")
-		arcs := computeReplicasetArc(replicas.(int64), availableReplicas.(int64), readyReplicas.(int64))
+		arcs := entity.Arcs{
+			Blue: 1,
+		}
+		replicas, _, err := unstructured.NestedFieldNoCopy(rs.Object, "spec", "replicas")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		availableReplicas, okAR, err := unstructured.NestedFieldNoCopy(rs.Object, "status", "availableReplicas")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		readyReplicas, okRR, err := unstructured.NestedFieldNoCopy(rs.Object, "status", "readyReplicas")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if okAR && okRR {
+			arcs = computeReplicasetArc(replicas.(int64), availableReplicas.(int64), readyReplicas.(int64))
+		}
 		node, currentEdges := extractFieldsFromRessource(&rs, "RS", false, arcs)
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)
@@ -187,6 +204,22 @@ func (k8s *K8sRepository) GetStatefulSets(ns, selector string) (nodes []entity.N
 
 	for _, rs := range rss.Items {
 		node, currentEdges := extractFieldsFromRessource(&rs, "STS", true, entity.Arcs{Blue: 1})
+		nodes = append(nodes, node)
+		edges = append(edges, currentEdges...)
+	}
+
+	return nodes, edges, nil
+}
+
+func (k8s *K8sRepository) GetJobs(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
+	var deploysGroupVersionResource = schema.GroupVersionResource{Group: "batch", Version: "v1", Resource: "jobs"}
+	rss, err := getRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, rs := range rss.Items {
+		node, currentEdges := extractFieldsFromRessource(&rs, "JOB", true, entity.Arcs{Blue: 1})
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)
 	}
