@@ -126,7 +126,7 @@ dagger.#Plan & {
 		}
 	}
 	client: {
-		env: REGISTRY_PASSWORD: dagger.#Secret | *""
+		env: REGISTRY_PASSWORD: string | *""
 		env: REGISTRY_USERNAME: string | ""
 		env: REGISTRY_URL: string | *"localhost:5001"
 		env: IMAGE_TAG: string | *"ci"
