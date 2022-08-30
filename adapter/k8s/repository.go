@@ -33,7 +33,7 @@ func NewK8sRepository() (*K8sRepository, error) {
 	return &K8sRepository{clientset: &clientset}, nil
 }
 
-func getRessources(dynamic dynamic.Interface, schema schema.GroupVersionResource, ns, selector string) (*unstructured.UnstructuredList, error) {
+func listRessources(dynamic dynamic.Interface, schema schema.GroupVersionResource, ns, selector string) (*unstructured.UnstructuredList, error) {
 	options := metav1.ListOptions{
 		LabelSelector: selector,
 	}
@@ -56,6 +56,7 @@ func extractFieldsFromRessource(resource *unstructured.Unstructured, ressourceTy
 			Target: uuid,
 			Source: "CLUSTER",
 		})
+		return
 	}
 	ownerReference, ok, _ := unstructured.NestedFieldNoCopy(resource.Object, "metadata", "ownerReferences")
 	if ok {
@@ -88,7 +89,7 @@ func computePodArc(state string, isready bool) (arcs entity.Arcs) {
 
 func (k8s *K8sRepository) GetPods(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
 	var podsGroupVersionResource = schema.GroupVersionResource{Group: "", Version: "v1", Resource: "pods"}
-	pods, err := getRessources(*k8s.clientset, podsGroupVersionResource, ns, selector)
+	pods, err := listRessources(*k8s.clientset, podsGroupVersionResource, ns, selector)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -128,7 +129,7 @@ func computeReplicasetArc(replicas, readyReplicas, currentReplicas int64) (arcs 
 
 func (k8s *K8sRepository) GetReplicasets(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
 	var rssGroupVersionResource = schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "replicasets"}
-	rss, err := getRessources(*k8s.clientset, rssGroupVersionResource, ns, selector)
+	rss, err := listRessources(*k8s.clientset, rssGroupVersionResource, ns, selector)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -165,7 +166,7 @@ func (k8s *K8sRepository) GetReplicasets(ns, selector string) (nodes []entity.No
 
 func (k8s *K8sRepository) GetDeployments(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
 	var deploysGroupVersionResource = schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
-	rss, err := getRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
+	rss, err := listRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -181,7 +182,7 @@ func (k8s *K8sRepository) GetDeployments(ns, selector string) (nodes []entity.No
 
 func (k8s *K8sRepository) GetDaemonSets(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
 	var daemonsetsGroupVersionResource = schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "daemonsets"}
-	rss, err := getRessources(*k8s.clientset, daemonsetsGroupVersionResource, ns, selector)
+	rss, err := listRessources(*k8s.clientset, daemonsetsGroupVersionResource, ns, selector)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -197,7 +198,7 @@ func (k8s *K8sRepository) GetDaemonSets(ns, selector string) (nodes []entity.Nod
 
 func (k8s *K8sRepository) GetStatefulSets(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
 	var deploysGroupVersionResource = schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "statefulsets"}
-	rss, err := getRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
+	rss, err := listRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -213,7 +214,7 @@ func (k8s *K8sRepository) GetStatefulSets(ns, selector string) (nodes []entity.N
 
 func (k8s *K8sRepository) GetJobs(ns, selector string) (nodes []entity.Node, edges []entity.Edge, err error) {
 	var deploysGroupVersionResource = schema.GroupVersionResource{Group: "batch", Version: "v1", Resource: "jobs"}
-	rss, err := getRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
+	rss, err := listRessources(*k8s.clientset, deploysGroupVersionResource, ns, selector)
 	if err != nil {
 		return nil, nil, err
 	}
