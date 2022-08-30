@@ -6,6 +6,7 @@ import (
 	"universe.dagger.io/docker"
 	"universe.dagger.io/bash"
 	"universe.dagger.io/alpha/kubernetes/kapp"
+	"universe.dagger.io/alpha/kubernetes/helm"
 )
 
 app: string | *"kubegraph"
@@ -46,6 +47,15 @@ app: string | *"kubegraph"
 	}
 
 	output: push.result
+
+	kc: dagger.#Secret
+
+	sts: helm.#Install & {
+		name:       "test-pgsql"
+		source:     "URL"
+		URL:        "https://charts.bitnami.com/bitnami/postgresql-11.1.12.tgz"
+		kubeconfig: kc
+	}
 }
 
 #DoIntegrationTest: {
@@ -116,6 +126,7 @@ dagger.#Plan & {
 			_prepare: #PrepareIntegrationTest & {
 				srcTest: client.filesystem."./it-test/pytest".read.contents
 				"registry_url": registry_url
+				kc: client.commands.kc.stdout
 			}
 
 			integrationTest: #DoIntegrationTest & {

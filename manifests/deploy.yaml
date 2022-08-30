@@ -64,11 +64,7 @@ spec:
       serviceAccount: kubegraph
       containers:
         - name: kubegraph
-          image: kubegraph
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+          image: ghcr.io/laupse/kubegraph:main
           readinessProbe:
             httpGet:
               path: /api/health
