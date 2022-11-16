@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/laupse/kubegraph/application/entity"
 	"github.com/laupse/kubegraph/application/services"
 )
@@ -30,6 +31,7 @@ func (f *FiberHandler) Run(address string) {
 }
 
 func (f *FiberHandler) SetupRoutes() {
+	f.app.Use(pprof.New())
 	f.app.Get("/api/health", func(c *fiber.Ctx) error {
 		return c.SendString("Ok")
 	})

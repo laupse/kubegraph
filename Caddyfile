@@ -1,0 +1,4 @@
+localhost:5002 proxy-registry:5002 {
+	reverse_proxy /v2/* kind-registry:5000
+	tls internal
+}
