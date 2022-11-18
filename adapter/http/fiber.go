@@ -1,7 +1,7 @@
 package http
 
 import (
-	"encoding/json"
+	json "github.com/goccy/go-json"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
@@ -41,7 +41,7 @@ func (f *FiberHandler) SetupRoutes() {
 	})
 
 	f.app.Get("/api/graph/data", func(c *fiber.Ctx) error {
-		grapData, err := dataHandler(c, f.graphService)
+		grapData, err := f.DataHandler(c, f.graphService)
 		if err != nil {
 			return err
 		}
@@ -49,9 +49,9 @@ func (f *FiberHandler) SetupRoutes() {
 	})
 }
 
-func dataHandler(c *fiber.Ctx, grahpService *services.GraphService) (*entity.GraphData, error) {
+func (f *FiberHandler) DataHandler(c *fiber.Ctx, grahpService *services.GraphService) (*entity.GraphData, error) {
 	namespace := c.Query("ns", "default")
 	selector := c.Query("selector", "")
-	graphData, err := grahpService.GetData(namespace, selector)
+	graphData, err := f.graphService.GetData(namespace, selector)
 	return graphData, err
 }

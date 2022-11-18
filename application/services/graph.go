@@ -35,7 +35,7 @@ func (GraphService *GraphService) GetData(ns, selector string) (*entity.GraphDat
 	var nodes []entity.Node
 	graphData := &entity.GraphData{
 		Nodes: []entity.Node{
-			{Id: "CLUSTER", Title: "CLUSTER", ArcBlue: 1},
+			{Id: "CLUSTER", Title: "CLUSTER", ArcBlue: entity.NewRational(1, 1)},
 		},
 	}
 	graphData.Nodes = append(graphData.Nodes, nodes...)

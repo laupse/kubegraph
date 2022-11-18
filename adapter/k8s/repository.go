@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/laupse/kubegraph/application/entity"
-	"github.com/laupse/kubegraph/utils"
 	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -86,16 +85,16 @@ func extractFieldsFromRessource(
 }
 
 func computePodArc(state string, isready bool) (arcs entity.Arcs) {
-	arcs.Blue = 0
+	arcs.Blue = entity.NewRational(0, 1)
 	if state != "Pending" && state != "Running" {
-		arcs.Red = 1
+		arcs.Red = entity.NewRational(1, 1)
 		return
 	}
 	if isready {
-		arcs.Green = 1
+		arcs.Green = entity.NewRational(1, 1)
 		return
 	}
-	arcs.Orange = 1
+	arcs.Orange = entity.NewRational(1, 1)
 	return
 
 }
@@ -128,17 +127,15 @@ func (k8s *K8sRepository) GetPods(
 }
 
 func computeReplicasetArc(replicas, readyReplicas, currentReplicas int64) (arcs entity.Arcs) {
-	arcs.Blue = 0
 	if replicas == 0 {
-		arcs.Blue = 1
+		arcs.Blue = entity.NewRational(1, 1)
 		return
 	}
-	ready := utils.RoundFloat(float64(readyReplicas)/float64(replicas), 2)
-	notready := utils.RoundFloat(float64((currentReplicas-readyReplicas))/float64(replicas), 2)
+	arcs.Blue = entity.NewRational(0, replicas)
 
-	arcs.Green = ready
-	arcs.Orange = notready
-	arcs.Red = utils.RoundFloat(1-(ready+notready), 2)
+	arcs.Green = entity.NewRational(readyReplicas, replicas)
+	arcs.Orange = entity.NewRational(currentReplicas-readyReplicas, replicas)
+	arcs.Red = entity.NewRational(replicas-currentReplicas, replicas)
 	return
 }
 
@@ -153,7 +150,7 @@ func (k8s *K8sRepository) GetReplicasets(
 
 	for _, rs := range rss.Items {
 		arcs := entity.Arcs{
-			Blue: 1,
+			Blue: entity.NewRational(1, 1),
 		}
 		replicas, _, err := unstructured.NestedFieldNoCopy(rs.Object, "spec", "replicas")
 		if err != nil {
@@ -189,7 +186,6 @@ func (k8s *K8sRepository) GetReplicasets(
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)
 	}
-
 	return nodes, edges, nil
 }
 
@@ -203,7 +199,7 @@ func (k8s *K8sRepository) GetDeployments(
 	}
 
 	for _, rs := range rss.Items {
-		node, currentEdges := extractFieldsFromRessource(&rs, "DEPLOY", true, entity.Arcs{Blue: 1})
+		node, currentEdges := extractFieldsFromRessource(&rs, "DEPLOY", true, entity.Arcs{Blue: entity.NewRational(1, 1)})
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)
 	}
@@ -221,7 +217,7 @@ func (k8s *K8sRepository) GetDaemonSets(
 	}
 
 	for _, rs := range rss.Items {
-		node, currentEdges := extractFieldsFromRessource(&rs, "DS", true, entity.Arcs{Blue: 1})
+		node, currentEdges := extractFieldsFromRessource(&rs, "DS", true, entity.Arcs{Blue: entity.NewRational(1, 1)})
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)
 	}
@@ -239,7 +235,7 @@ func (k8s *K8sRepository) GetStatefulSets(
 	}
 
 	for _, rs := range rss.Items {
-		node, currentEdges := extractFieldsFromRessource(&rs, "STS", true, entity.Arcs{Blue: 1})
+		node, currentEdges := extractFieldsFromRessource(&rs, "STS", true, entity.Arcs{Blue: entity.NewRational(1, 1)})
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)
 	}
@@ -257,7 +253,7 @@ func (k8s *K8sRepository) GetJobs(
 	}
 
 	for _, rs := range rss.Items {
-		node, currentEdges := extractFieldsFromRessource(&rs, "JOB", true, entity.Arcs{Blue: 1})
+		node, currentEdges := extractFieldsFromRessource(&rs, "JOB", true, entity.Arcs{Blue: entity.NewRational(1, 1)})
 		nodes = append(nodes, node)
 		edges = append(edges, currentEdges...)
 	}
